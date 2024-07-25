@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  
+  # База данных
+  db:
+    platform: linux/x86_64
+    image: mysql:8.0
+    volumes:
+      - db_data:/var/lib/mysql
+    restart: always
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: 123
+      MYSQL_DATABASE: user_id_telegram
+      MYSQL_PASSWORD: 1234
+    networks:
+      - mysql-phpmyadmin
+
+  # phpMyAdmin
+  phpmyadmin:
+    depends_on:
+      - db
+    image: phpmyadmin
+    restart: always
+    ports:
+      - "8090:80"
+    environment:
+      PMA_HOST: db
+      MYSQL_ROOT_PASSWORD: 123
+    networks:
+      - mysql-phpmyadmin
+
+  # # Бот Отдельный контейнер
+  # bot_main:
+  #   image: python:3.10 
+  #   container_name: telegram_bot_trede
+  #   restart: always
+ 
+  #   volumes:
+  #     - db_data:/usr/src/app
+ 
+  #   command: sh -c "pip install mysql-connector aiogram==2.25.2 aiohttp==3.8.1 mysql-connector-python==8.0.29 requests==2.27.1 && python bot_mysql.py"
+  #   depends_on:
+  #     - db
+  #   networks:
+  #     - mysql-phpmyadmin
+
+networks:
+  mysql-phpmyadmin:
+
+volumes:
+  db_data:
+
